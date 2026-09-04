@@ -91,11 +91,12 @@ export const apiAddStore = async (storeData) => {
 };
 
 export const apiAddUser = async (userData) => {
-    // Uses /auth/signup to add users
-    const res = await api.post("/auth/signup", {
+    // Uses /admin/adduser to support role assignment (USER, ADMIN, OWNER)
+    const res = await api.post("/admin/adduser", {
         name: userData.name,
         email: userData.email,
-        password: userData.password
+        password: userData.password,
+        role: userData.role || "USER"
     });
     return res.data;
 };

@@ -93,7 +93,6 @@ const AdminDashboard = () => {
     const [newUserForm, setNewUserForm] = useState({
         name: "",
         email: "",
-        address: "",
         password: "",
         role: "USER"
     });
@@ -251,26 +250,21 @@ const AdminDashboard = () => {
         }
 
         try {
-            await apiAddUser(newUserForm);
-            const freshUsers = await apiGetUsers();
-            if (freshUsers && freshUsers.length > 0) {
-                setUsers(freshUsers);
-            }
+            await apiAddUser({
+                name: newUserForm.name.trim(),
+                email: newUserForm.email.trim(),
+                password: newUserForm.password,
+                role: newUserForm.role
+            });
+            await refreshData();
+            setIsAddUserOpen(false);
+            setNewUserForm({ name: "", email: "", password: "", role: "USER" });
+            setUserFormErrors({});
         } catch (err) {
-            console.warn("API Add User fallback to local storage:", err.message);
+            console.error("API Add User error:", err);
+            const msg = err.response?.data?.message || "Failed to add user. Please try again.";
+            setUserFormErrors({ form: msg });
         }
-
-        saveUser({
-            name: newUserForm.name.trim(),
-            email: newUserForm.email.trim(),
-            password: newUserForm.password,
-            role: newUserForm.role
-        });
-
-        refreshData();
-        setIsAddUserOpen(false);
-        setNewUserForm({ name: "", email: "", password: "", role: "USER" });
-        setUserFormErrors({});
     };
 
     // Handle Create Store
@@ -876,24 +870,11 @@ const AdminDashboard = () => {
                                 )}
                             </div>
 
-                            <div>
-                                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
-                                    Address <span className="text-rose-500">*</span>
-                                </label>
-                                <textarea
-                                    rows="3"
-                                    required
-                                    value={newUserForm.address}
-                                    onChange={(e) =>
-                                        setNewUserForm({ ...newUserForm, address: e.target.value })
-                                    }
-                                    placeholder="Street, City, Postal Code"
-                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none resize-none"
-                                />
-                                {userFormErrors.address && (
-                                    <p className="text-xs text-rose-500 mt-1">{userFormErrors.address}</p>
-                                )}
-                            </div>
+                            {userFormErrors.form && (
+                                <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700">
+                                    {userFormErrors.form}
+                                </div>
+                            )}
 
                             <div>
                                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">

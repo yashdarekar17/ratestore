@@ -17,7 +17,8 @@ import {
     X,
     Eye,
     EyeOff,
-    TrendingUp
+    TrendingUp,
+    Loader2
 } from "lucide-react";
 import { apiGetStores, apiGetRatings, apiUpdatePassword } from "../services/api";
 import { validatePassword } from "../services/validation";
@@ -37,15 +38,21 @@ const OwnerDashboard = () => {
 
     const [stores, setStores] = useState([]);
     const [ratings, setRatings] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const load = async () => {
-            const [list, fetchedRatings] = await Promise.all([
-                apiGetStores(),
-                apiGetRatings()
-            ]);
-            if (list) setStores(list);
-            if (fetchedRatings) setRatings(fetchedRatings);
+            setIsLoading(true);
+            try {
+                const [list, fetchedRatings] = await Promise.all([
+                    apiGetStores(),
+                    apiGetRatings()
+                ]);
+                if (list) setStores(list);
+                if (fetchedRatings) setRatings(fetchedRatings);
+            } finally {
+                setIsLoading(false);
+            }
         };
         load();
     }, []);
@@ -168,6 +175,14 @@ const OwnerDashboard = () => {
 
     return (
         <DashboardLayout role="OWNER">
+            {isLoading && (
+                <div className="flex flex-col items-center justify-center py-24 gap-4">
+                    <Loader2 className="w-10 h-10 text-sky-500 animate-spin" />
+                    <p className="text-sm font-medium text-slate-600">Loading store data...</p>
+                    <p className="text-xs text-slate-400">Please wait a moment</p>
+                </div>
+            )}
+            {!isLoading && (<>
             {/* Header Title & Actions */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
                 <div>
@@ -550,7 +565,7 @@ const OwnerDashboard = () => {
                         </form>
                     </div>
                 </div>
-            )}
+            )}</>) }
         </DashboardLayout>
     );
 };

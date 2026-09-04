@@ -14,7 +14,8 @@ import {
     X,
     Clock,
     Eye,
-    EyeOff
+    EyeOff,
+    Loader2
 } from "lucide-react";
 import { apiGetStores, apiSubmitRating, apiGetRatings, apiUpdatePassword } from "../services/api";
 import { validatePassword } from "../services/validation";
@@ -35,10 +36,12 @@ const UserDashboard = () => {
     // State
     const [stores, setStores] = useState([]);
     const [ratings, setRatings] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     // Fetch backend stores and ratings on load
     useEffect(() => {
         const loadInitialData = async () => {
+            setIsLoading(true);
             try {
                 const [liveStores, liveRatings] = await Promise.all([
                     apiGetStores(),
@@ -48,6 +51,8 @@ const UserDashboard = () => {
                 if (liveRatings) setRatings(liveRatings);
             } catch (err) {
                 console.warn("Could not load backend stores or ratings:", err.message);
+            } finally {
+                setIsLoading(false);
             }
         };
         loadInitialData();
@@ -201,6 +206,14 @@ const UserDashboard = () => {
 
     return (
         <DashboardLayout role="USER">
+            {isLoading && (
+                <div className="flex flex-col items-center justify-center py-24 gap-4">
+                    <Loader2 className="w-10 h-10 text-sky-500 animate-spin" />
+                    <p className="text-sm font-medium text-slate-600">Loading stores & ratings...</p>
+                    <p className="text-xs text-slate-400">Please wait a moment</p>
+                </div>
+            )}
+            {!isLoading && (<>
             {/* Top Header Banner */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
                 <div>
@@ -639,7 +652,7 @@ const UserDashboard = () => {
                         </form>
                     </div>
                 </div>
-            )}
+            )}</>) }
         </DashboardLayout>
     );
 };
