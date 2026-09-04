@@ -5,11 +5,13 @@ const app = express();
 const pool = require("./db/database");
 
 app.use(express.json());
-app.use(cors(
-    "http://localhost:5173/",
-    process.env.FRONTEND_URL
-
-));
+app.use(cors({
+    origin: [
+        "http://localhost:5173",
+        process.env.FRONTEND_URL
+    ].filter(Boolean),
+    credentials: true
+}));
 
 pool.query("SELECT NOW()", (err, res) => {
     if (err) {

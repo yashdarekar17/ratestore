@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, LogIn, Star, AlertCircle } from "lucide-react";
 import { validateEmail } from "../services/validation";
-import axios from "axios";
+import api from "../services/api";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -46,7 +46,7 @@ const Login = () => {
         setLoading(true);
 
         try {
-            const res = await axios.post("http://localhost:3000/auth/login", {
+            const res = await api.post("/auth/login", {
                 email: formData.email.trim(),
                 password: formData.password
             });
