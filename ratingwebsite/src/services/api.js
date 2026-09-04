@@ -1,8 +1,16 @@
 import axios from "axios";
 
-const API_BASE_URL =
+const rawBaseUrl =
     (typeof import.meta !== "undefined" && import.meta.env?.VITE_API_BASE_URL) ||
-    (typeof process !== "undefined" && process.env?.API_BASE_URL);
+    (typeof process !== "undefined" && process.env?.API_BASE_URL) ||
+    "https://ratestore-eow7.onrender.com";
+
+// Sanitize URL: Strip any accidental quotes ("), ('), semicolons (;), or trailing slashes
+
+const API_BASE_URL = String(rawBaseUrl || "")
+    .trim()
+    .replace(/^["'\s]+|["';\s]+$/g, "")
+    .replace(/\/+$/, "") || "https://ratestore-eow7.onrender.com";
 
 const api = axios.create({
     baseURL: API_BASE_URL,

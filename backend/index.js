@@ -6,10 +6,7 @@ const pool = require("./db/database");
 
 app.use(express.json());
 app.use(cors({
-    origin: [
-        "http://localhost:5173",
-        process.env.FRONTEND_URL
-    ].filter(Boolean),
+    origin: (origin, callback) => callback(null, true),
     credentials: true
 }));
 
