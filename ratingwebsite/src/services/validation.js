@@ -24,7 +24,6 @@ export const validateAddress = (address) => {
     return "";
 };
 
-export const VALIDATION_RULES = {};
 
 // Safe fallback helpers
 export const getStoreStats = (storeId) => {
@@ -45,7 +44,6 @@ export default {
     validateEmail,
     validatePassword,
     validateAddress,
-    VALIDATION_RULES,
     getStoreStats,
     getStoredUsers,
     saveUser,
