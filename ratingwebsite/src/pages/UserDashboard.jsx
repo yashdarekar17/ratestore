@@ -16,7 +16,8 @@ import {
     Eye,
     EyeOff
 } from "lucide-react";
-import { apiGetStores, apiSubmitRating, apiGetRatings } from "../services/api";
+import { apiGetStores, apiSubmitRating, apiGetRatings, apiUpdatePassword } from "../services/api";
+import { validatePassword } from "../services/validation";
 
 const UserDashboard = () => {
     // Current user session
@@ -164,7 +165,7 @@ const UserDashboard = () => {
     }, [stores, ratings, searchQuery, filterCategory, sortState]);
 
     // Handle Password Update Form
-    const handlePasswordSubmit = (e) => {
+    const handlePasswordSubmit = async (e) => {
         e.preventDefault();
         setPasswordErrors({});
         setPasswordSuccess(false);
@@ -180,14 +181,21 @@ const UserDashboard = () => {
             return;
         }
 
-        const success = updatePassword(currentUser.email, passwordData.newPassword);
-        if (success) {
+        try {
+            await apiUpdatePassword({
+                email: currentUser.email,
+                newPassword: passwordData.newPassword
+            });
             setPasswordSuccess(true);
             setTimeout(() => {
                 setIsPasswordModalOpen(false);
                 setPasswordSuccess(false);
                 setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
             }, 1400);
+        } catch (err) {
+            console.error("Failed to update password:", err);
+            const msg = err.response?.data?.message || "Failed to update password. Please try again.";
+            setPasswordErrors({ general: msg });
         }
     };
 
@@ -549,6 +557,13 @@ const UserDashboard = () => {
                             <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-xs flex items-center gap-2">
                                 <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                                 <span>Password updated successfully!</span>
+                            </div>
+                        )}
+
+                        {passwordErrors.general && (
+                            <div className="mb-4 p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs flex items-center gap-2">
+                                <AlertCircle className="w-4 h-4 text-rose-500 shrink-0" />
+                                <span>{passwordErrors.general}</span>
                             </div>
                         )}
 

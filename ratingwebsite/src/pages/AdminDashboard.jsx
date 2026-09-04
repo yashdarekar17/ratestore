@@ -13,7 +13,9 @@ import {
     X,
     Eye,
     Shield,
-    UserCheck
+    UserCheck,
+    Loader2,
+    RefreshCw
 } from "lucide-react";
 import {
     validateName,
@@ -36,10 +38,12 @@ const AdminDashboard = () => {
     const [stores, setStores] = useState([]);
     const [ratings, setRatings] = useState([]);
     const [dashboardMetrics, setDashboardMetrics] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     // Fetch live backend data on component load
     useEffect(() => {
         const loadBackendData = async () => {
+            setIsLoading(true);
             try {
                 const [backendUsers, backendStores, metrics, backendRatings] = await Promise.all([
                     apiGetUsers(),
@@ -61,6 +65,8 @@ const AdminDashboard = () => {
                 }
             } catch (err) {
                 console.warn("Backend loading notice:", err.message);
+            } finally {
+                setIsLoading(false);
             }
         };
         loadBackendData();
@@ -104,6 +110,7 @@ const AdminDashboard = () => {
 
     // Refresh data
     const refreshData = async () => {
+        setIsLoading(true);
         try {
             const [backendUsers, backendStores, metrics, backendRatings] = await Promise.all([
                 apiGetUsers(),
@@ -117,6 +124,8 @@ const AdminDashboard = () => {
             if (backendRatings) setRatings(backendRatings);
         } catch (err) {
             console.warn("Refresh error:", err.message);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -315,6 +324,15 @@ const AdminDashboard = () => {
                 </div>
                 <div className="flex items-center gap-3">
                     <button
+                        onClick={refreshData}
+                        disabled={isLoading}
+                        className="flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-3.5 py-2.5 rounded-xl font-medium text-sm shadow-xs transition active:scale-95 cursor-pointer disabled:opacity-60"
+                        title="Refresh data from database"
+                    >
+                        <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin text-sky-500" : "text-slate-500"}`} />
+                        <span className="hidden sm:inline">{isLoading ? "Refreshing..." : "Refresh"}</span>
+                    </button>
+                    <button
                         onClick={() => setIsAddUserOpen(true)}
                         className="flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2.5 rounded-xl font-medium text-sm shadow-sm shadow-sky-500/20 transition active:scale-95 cursor-pointer"
                     >
@@ -339,9 +357,16 @@ const AdminDashboard = () => {
                         <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
                             Total Users
                         </p>
-                        <h2 className="text-3xl font-bold text-slate-800 mt-1">
-                            {users.length}
-                        </h2>
+                        {isLoading ? (
+                            <div className="flex items-center gap-2 mt-2">
+                                <Loader2 className="w-5 h-5 text-sky-500 animate-spin" />
+                                <span className="text-xs text-slate-400">Loading...</span>
+                            </div>
+                        ) : (
+                            <h2 className="text-3xl font-bold text-slate-800 mt-1">
+                                {users.length}
+                            </h2>
+                        )}
                         <span className="text-xs text-sky-600 font-medium inline-block mt-1">
                             Admins, Users & Owners
                         </span>
@@ -357,9 +382,16 @@ const AdminDashboard = () => {
                         <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
                             Total Stores
                         </p>
-                        <h2 className="text-3xl font-bold text-slate-800 mt-1">
-                            {stores.length}
-                        </h2>
+                        {isLoading ? (
+                            <div className="flex items-center gap-2 mt-2">
+                                <Loader2 className="w-5 h-5 text-sky-500 animate-spin" />
+                                <span className="text-xs text-slate-400">Loading...</span>
+                            </div>
+                        ) : (
+                            <h2 className="text-3xl font-bold text-slate-800 mt-1">
+                                {stores.length}
+                            </h2>
+                        )}
                         <span className="text-xs text-sky-600 font-medium inline-block mt-1">
                             Registered businesses
                         </span>
@@ -375,9 +407,16 @@ const AdminDashboard = () => {
                         <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
                             Total Ratings
                         </p>
-                        <h2 className="text-3xl font-bold text-slate-800 mt-1">
-                            {dashboardMetrics?.total_ratings !== undefined ? Number(dashboardMetrics.total_ratings) : ratings.length}
-                        </h2>
+                        {isLoading ? (
+                            <div className="flex items-center gap-2 mt-2">
+                                <Loader2 className="w-5 h-5 text-sky-500 animate-spin" />
+                                <span className="text-xs text-slate-400">Loading...</span>
+                            </div>
+                        ) : (
+                            <h2 className="text-3xl font-bold text-slate-800 mt-1">
+                                {dashboardMetrics?.total_ratings !== undefined ? Number(dashboardMetrics.total_ratings) : ratings.length}
+                            </h2>
+                        )}
                         <span className="text-xs text-amber-500 font-medium inline-block mt-1">
                             Customer feedback submitted
                         </span>
@@ -515,23 +554,6 @@ const AdminDashboard = () => {
                                     </th>
                                     <th
                                         className="py-3.5 px-5 cursor-pointer hover:bg-slate-100 transition"
-                                        onClick={() => handleUserSort("address")}
-                                    >
-                                        <div className="flex items-center gap-1.5">
-                                            <span>Address</span>
-                                            {userSort.field === "address" ? (
-                                                userSort.direction === "asc" ? (
-                                                    <ArrowUp className="w-3.5 h-3.5 text-sky-600" />
-                                                ) : (
-                                                    <ArrowDown className="w-3.5 h-3.5 text-sky-600" />
-                                                )
-                                            ) : (
-                                                <ArrowUpDown className="w-3.5 h-3.5 text-slate-400" />
-                                            )}
-                                        </div>
-                                    </th>
-                                    <th
-                                        className="py-3.5 px-5 cursor-pointer hover:bg-slate-100 transition"
                                         onClick={() => handleUserSort("role")}
                                     >
                                         <div className="flex items-center gap-1.5">
@@ -547,36 +569,32 @@ const AdminDashboard = () => {
                                             )}
                                         </div>
                                     </th>
-                                    <th
-                                        className="py-3.5 px-5 cursor-pointer hover:bg-slate-100 transition"
-                                        onClick={() => handleUserSort("rating")}
-                                    >
-                                        <div className="flex items-center gap-1.5">
-                                            <span>Store Rating</span>
-                                            {userSort.field === "rating" ? (
-                                                userSort.direction === "asc" ? (
-                                                    <ArrowUp className="w-3.5 h-3.5 text-sky-600" />
-                                                ) : (
-                                                    <ArrowDown className="w-3.5 h-3.5 text-sky-600" />
-                                                )
-                                            ) : (
-                                                <ArrowUpDown className="w-3.5 h-3.5 text-slate-400" />
-                                            )}
-                                        </div>
-                                    </th>
                                     <th className="py-3.5 px-5 text-right">Action</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 text-xs sm:text-sm">
-                                {filteredUsers.length === 0 ? (
+                                {isLoading ? (
                                     <tr>
-                                        <td colSpan="6" className="py-12 text-center text-slate-400">
+                                        <td colSpan="4" className="py-16 text-center">
+                                            <div className="flex flex-col items-center justify-center gap-2.5">
+                                                <Loader2 className="w-8 h-8 text-sky-500 animate-spin" />
+                                                <p className="text-sm font-medium text-slate-600">
+                                                    Fetching user records from database...
+                                                </p>
+                                                <p className="text-xs text-slate-400">
+                                                    Please wait a moment
+                                                </p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ) : filteredUsers.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="4" className="py-12 text-center text-slate-400">
                                             No users found matching your filters.
                                         </td>
                                     </tr>
                                 ) : (
                                     filteredUsers.map((u) => {
-                                        const ownerRat = getUserOwnerRating(u);
                                         return (
                                             <tr key={u.id || u.email} className="hover:bg-sky-50/30 transition">
                                                 <td className="py-4 px-5 font-semibold text-slate-800">
@@ -584,9 +602,6 @@ const AdminDashboard = () => {
                                                 </td>
                                                 <td className="py-4 px-5 text-slate-600">
                                                     {u.email}
-                                                </td>
-                                                <td className="py-4 px-5 text-slate-600 max-w-xs truncate" title={u.address}>
-                                                    {u.address}
                                                 </td>
                                                 <td className="py-4 px-5">
                                                     <span
@@ -602,16 +617,6 @@ const AdminDashboard = () => {
                                                         {u.role === "USER" && <UserCheck className="w-3 h-3" />}
                                                         <span>{u.role}</span>
                                                     </span>
-                                                </td>
-                                                <td className="py-4 px-5">
-                                                    {u.role === "OWNER" ? (
-                                                        <div className="flex items-center gap-1.5 font-bold text-amber-600">
-                                                            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                                                            <span>{ownerRat ? `${ownerRat} / 5` : "No ratings"}</span>
-                                                        </div>
-                                                    ) : (
-                                                        <span className="text-slate-400 text-xs">N/A</span>
-                                                    )}
                                                 </td>
                                                 <td className="py-4 px-5 text-right">
                                                     <button
@@ -724,7 +729,21 @@ const AdminDashboard = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 text-xs sm:text-sm">
-                                {filteredStores.length === 0 ? (
+                                {isLoading ? (
+                                    <tr>
+                                        <td colSpan="5" className="py-16 text-center">
+                                            <div className="flex flex-col items-center justify-center gap-2.5">
+                                                <Loader2 className="w-8 h-8 text-sky-500 animate-spin" />
+                                                <p className="text-sm font-medium text-slate-600">
+                                                    Fetching store records from database...
+                                                </p>
+                                                <p className="text-xs text-slate-400">
+                                                    Please wait a moment
+                                                </p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ) : filteredStores.length === 0 ? (
                                     <tr>
                                         <td colSpan="5" className="py-12 text-center text-slate-400">
                                             No stores found matching your search.

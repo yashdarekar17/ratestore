@@ -23,8 +23,15 @@ export const apiSignup = async (userData) => {
 export const apiLogin = async (credentials) => {
     const res = await api.post("/auth/login", {
         email: credentials.email,
-        password: credentials.password,
-        role: credentials.role || "USER"
+        password: credentials.password
+    });
+    return res.data;
+};
+
+export const apiUpdatePassword = async ({ email, newPassword }) => {
+    const res = await api.post("/auth/update-password", {
+        email: email.trim(),
+        newPassword
     });
     return res.data;
 };

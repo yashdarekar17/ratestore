@@ -88,7 +88,7 @@ const Signup = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 flex items-center justify-center p-4 py-8">
-            <div className="w-full max-w-lg">
+            <div className="w-full max-w-md">
                 {/* Brand Header */}
                 <div className="text-center mb-6">
                     <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-sky-500 shadow-lg shadow-sky-500/25 mb-3 text-white">
