@@ -1069,14 +1069,14 @@ const AdminDashboard = () => {
                                 </p>
                             </div>
 
-                            <div>
+                            {/* <div>
                                 <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                                     Address
                                 </span>
                                 <p className="text-sm text-slate-700 mt-0.5 leading-relaxed">
                                     {selectedUser.address}
                                 </p>
-                            </div>
+                            </div> */}
 
                             <div>
                                 <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
@@ -1096,7 +1096,7 @@ const AdminDashboard = () => {
                                 </div>
                             </div>
 
-                            {selectedUser.role === "OWNER" && (
+                            {/* {selectedUser.role === "OWNER" && (
                                 <div className="p-3.5 bg-amber-50 rounded-xl border border-amber-200">
                                     <span className="text-xs font-semibold uppercase tracking-wider text-amber-800">
                                         Store Owner Rating
@@ -1110,7 +1110,7 @@ const AdminDashboard = () => {
                                         </span>
                                     </div>
                                 </div>
-                            )}
+                            )} */}
                         </div>
 
                         <div className="pt-6 border-t border-slate-100 mt-6 flex justify-end">
