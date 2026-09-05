@@ -2,6 +2,11 @@
 
 A Full Stack Store Rating Platform built as part of the FullStack Intern Coding Challenge.
 
+## Live Demo
+
+🌐 **[https://ratestore-azure.vercel.app/](https://ratestore-azure.vercel.app/)**
+
+
 ## Project Overview
 
 The Rating Platform is a web application where users can view registered stores and submit ratings from 1 to 5 stars.
