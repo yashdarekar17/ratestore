@@ -41,7 +41,7 @@ const Header = ({ role }) => {
                 </div>
                 <div>
                     <h1 className="text-xl font-bold tracking-tight text-white leading-none">
-                        RatingApp
+                        RatingStore
                     </h1>
                     <p className="text-xs text-sky-100 font-medium mt-0.5">
                         Store Review Platform
