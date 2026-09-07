@@ -30,6 +30,7 @@ const signup = async (req, res) => {
 
         res.status(200).json({
             message: "User registered successfully",
+            user: result.rows[0]
         });
       
     } catch (err) {
@@ -74,7 +75,14 @@ const login = async (req, res) => {
         }
 
         res.status(200).json({
-            message: "Login successfully",});
+            message: "Login successfully",
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: (user.role || "USER").toUpperCase()
+            }
+        });
 
     } catch (err) {
         console.error("Login error:", err);
