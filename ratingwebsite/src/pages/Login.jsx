@@ -50,7 +50,7 @@ const Login = () => {
                 email: formData.email.trim(),
                 password: formData.password
             });
-            console.log("Login response:", res.data);
+           
 
             const user = res.data.user || res.data;
             if (!user) {
